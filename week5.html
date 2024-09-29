@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Handling Exercise</title>
+    <style>
+        .error { color: red; }
+        .summary { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>User Registration Form</h1>
+    <form id="registrationForm">
+        <label for="name">Name (required):</label>
+        <input type="text" id="name" required><br><br>
+
+        <label for="email">Email (required):</label>
+        <input type="email" id="email" required><br><br>
+
+        <label for="contactMethod">Preferred Contact Method:</label>
+        <select id="contactMethod" required>
+            <option value="">Select</option>
+            <option value="email">Email</option>
+            <option value="phone">Phone</option>
+        </select><br><br>
+
+        <label>
+            <input type="checkbox" id="terms"> I accept the terms and conditions
+        </label><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="formSummary" class="summary"></div>
+
+    <script src="script.js">
+      document.getElementById('registrationForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+    
+        // Capture form data
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const contactMethod = document.getElementById('contactMethod').value;
+        const termsAccepted = document.getElementById('terms').checked;
+    
+        // Data validation
+        const errors = [];
+        if (!name) errors.push("Name is required.");
+        if (!email || !validateEmail(email)) errors.push("Valid email is required.");
+        if (!contactMethod) errors.push("Preferred contact method is required.");
+        if (!termsAccepted) errors.push("You must accept the terms and conditions.");
+    
+        // Display errors if any
+        if (errors.length > 0) {
+            alert(errors.join("\n"));
+            return; // Stop the submission
+        }
+    
+        // Data processing
+        const formData = {
+            name: name,
+            email: email,
+            contactMethod: contactMethod,
+            termsAccepted: termsAccepted,
+        };
+    
+        // Display summary
+        displaySummary(formData);
+    });
+    
+    // Validate email format
+    function validateEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+    
+    // Display captured form data
+    function displaySummary(data) {
+        const summaryDiv = document.getElementById('formSummary');
+        summaryDiv.innerHTML = `
+            <h2>Form Summary</h2>
+            <p><strong>Name:</strong> ${data.name}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>Preferred Contact Method:</strong> ${data.contactMethod}</p>
+            <p><strong>Terms Accepted:</strong> ${data.termsAccepted ? 'Yes' : 'No'}</p>
+        `;
+    }
+    
+    // Real-time feedback for email validation
+    document.getElementById('email').addEventListener('input', function() {
+        const email = this.value;
+        const feedback = document.createElement('div');
+        feedback.className = 'error';
+        this.parentNode.insertBefore(feedback, this.nextSibling);
+    
+        if (!validateEmail(email) && email !== "") {
+            feedback.textContent = "Email format is incorrect.";
+        } else {
+            feedback.textContent = ""; // Clear feedback if valid
+        }
+    });
+    
+    </script>
+</body>
+</html>
